@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { CreatePost } from "~/app/_components/create-post";
 import { api } from "~/trpc/server";
+import Auth from "./_components/auth";
 
 export default async function Home() {
   const hello = await api.post.hello.query({ text: "from tRPC" });
@@ -36,12 +37,12 @@ export default async function Home() {
             </div>
           </Link>
         </div>
+        <Auth />
         <div className="flex flex-col items-center gap-2">
           <p className="text-2xl text-white">
             {hello ? hello.greeting : "Loading tRPC query..."}
           </p>
         </div>
-
         <CrudShowcase />
       </div>
     </main>
