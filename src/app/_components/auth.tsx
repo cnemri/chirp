@@ -1,17 +1,23 @@
 "use client";
 import { SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
 import React from "react";
+import LoadingContainer from "./LoadingContainer";
 
 const Auth = () => {
-  const user = useUser();
+  const { isSignedIn, isLoaded } = useUser();
+
+  if (!isLoaded) {
+    return <LoadingContainer />;
+  }
+
   return (
     <div className="flex border-b border-slate-400 p-4">
-      {!user.isSignedIn && (
+      {!isSignedIn && (
         <div className="flex justify-center">
           <SignInButton />
         </div>
       )}
-      {!!user.isSignedIn && <SignOutButton />}
+      {!!isSignedIn && <SignOutButton />}
     </div>
   );
 };

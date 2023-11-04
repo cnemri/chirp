@@ -7,10 +7,8 @@ const CreatePostWizard = () => {
   const { user } = useUser();
   if (!user) return null;
 
-  console.log(user.id);
-
   return (
-    <div className="flex w-full gap-3">
+    <div className="flex w-full gap-3 p-3">
       <Image
         src={user.imageUrl}
         alt="Profile image"
