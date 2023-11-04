@@ -6,6 +6,7 @@ import Auth from "./_components/auth";
 
 export default async function Home() {
   const hello = await api.post.hello.query({ text: "from tRPC" });
+  const data = await api.post.getAll.query();
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
@@ -44,6 +45,11 @@ export default async function Home() {
           </p>
         </div>
         <CrudShowcase />
+        <div>
+          {data.map((post, index) => (
+            <div key={index}>{post.content}</div>
+          ))}
+        </div>
       </div>
     </main>
   );
@@ -55,7 +61,25 @@ async function CrudShowcase() {
   return (
     <div className="w-full max-w-xs">
       {latestPost ? (
-        <p className="truncate">Your most recent post: {latestPost.name}</p>
+        <>
+          <div className="mb-5 font-semibold">The latest post is: </div>
+          <div className="mb-10 flex flex-col gap-5 rounded-3xl bg-white p-4 text-black shadow-md">
+            <div className="flex flex-row gap-5">
+              <p>AuthorID</p>
+              <p>{latestPost.authorId}</p>
+            </div>
+            <hr />
+            <div className="flex flex-row gap-5">
+              <p>Created at</p>
+              <p>{latestPost.createdAt.toISOString()}</p>
+            </div>
+            <hr />
+            <div className="flex flex-row gap-5">
+              <p>Content</p>
+              <p>{latestPost.content}</p>
+            </div>
+          </div>
+        </>
       ) : (
         <p>You have no posts yet.</p>
       )}
