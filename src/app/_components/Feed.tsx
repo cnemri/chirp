@@ -5,7 +5,7 @@ import { api } from "~/trpc/react";
 import PostView from "./PostView";
 import LoadingContainer from "./LoadingContainer";
 
-const Data = () => {
+const Feed = () => {
   const { data, isLoading: postsLoading } = api.post.getAll.useQuery();
 
   if (postsLoading) {
@@ -25,4 +25,4 @@ const Data = () => {
   );
 };
 
-export default Data;
+export default Feed;

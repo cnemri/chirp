@@ -2,9 +2,20 @@
 
 import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
+import { useState } from "react";
+import { api } from "~/trpc/react";
 
 const CreatePostWizard = () => {
   const { user } = useUser();
+  const [input, setInput] = useState("");
+  const ctx = api.useUtils();
+  const { mutate, isLoading: isPosting } = api.post.create.useMutation({
+    onSuccess: async () => {
+      setInput("");
+      await ctx.post.getAll.invalidate();
+    },
+  });
+
   if (!user) return null;
 
   return (
@@ -19,7 +30,18 @@ const CreatePostWizard = () => {
       <input
         placeholder="Type some emojis"
         className="grow bg-transparent px-3 outline-none"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        type="text"
+        disabled={isPosting}
       />
+      <button
+        onClick={() => {
+          mutate({ content: input });
+        }}
+      >
+        Post
+      </button>
     </div>
   );
 };

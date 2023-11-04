@@ -1,5 +1,5 @@
 import Auth from "./_components/Auth";
-import Data from "./_components/Data";
+import Feed from "./_components/Feed";
 import CreatePostWizard from "./_components/CreatePostWizard";
 
 export const dynamic = "force-dynamic";
@@ -10,7 +10,7 @@ export default function Home() {
       <div className="h-full w-full border-x border-slate-400 md:max-w-2xl">
         <CreatePostWizard />
         <Auth />
-        <Data />
+        <Feed />
       </div>
     </main>
   );

@@ -6,7 +6,8 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
-import { initTRPC } from "@trpc/server";
+import { auth } from "@clerk/nextjs";
+import { TRPCError, initTRPC } from "@trpc/server";
 import { type NextRequest } from "next/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
@@ -36,9 +37,13 @@ interface CreateContextOptions {
  * @see https://create.t3.gg/en/usage/trpc#-serverapitrpcts
  */
 export const createInnerTRPCContext = (opts: CreateContextOptions) => {
+  const sesh = auth();
+  const userId = sesh.userId;
+
   return {
     headers: opts.headers,
     db,
+    currentUserId: userId,
   };
 };
 
@@ -100,3 +105,18 @@ export const createTRPCRouter = t.router;
  * are logged in.
  */
 export const publicProcedure = t.procedure;
+const enforceUserIsAuth = t.middleware(({ ctx, next }) => {
+  if (!ctx.currentUserId) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "You must be logged in to do that.",
+    });
+  }
+  return next({
+    ctx: {
+      currentUserId: ctx.currentUserId,
+    },
+  });
+});
+
+export const privateProcedure = t.procedure.use(enforceUserIsAuth);
