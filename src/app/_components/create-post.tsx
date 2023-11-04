@@ -25,6 +25,7 @@ export function CreatePost() {
       }}
       className="flex flex-col gap-2"
     >
+      <h2 className="text-2xl font-semibold">Create a post</h2>
       <input
         type="text"
         placeholder="Post content..."
