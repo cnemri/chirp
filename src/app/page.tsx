@@ -1,6 +1,6 @@
-import Auth from "./_components/Auth";
 import Feed from "./_components/Feed";
 import CreatePostWizard from "./_components/CreatePostWizard";
+import Auth from "./_components/Auth";
 
 export const dynamic = "force-dynamic";
 
