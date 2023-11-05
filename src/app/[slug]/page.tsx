@@ -1,10 +1,11 @@
-import type { GetStaticProps, Metadata } from "next";
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import type { Metadata } from "next";
 import React from "react";
 import { api } from "~/trpc/server";
-import { createServerSideHelpers } from "@trpc/react-query/server";
-import { appRouter } from "~/server/api/root";
-import { db } from "~/server/db";
-import superjson from "superjson";
+import Layout from "../_components/Layout";
+import Image from "next/image";
+import ProfileFeed from "../_components/ProfileFeed";
 
 type Props = {
   params: {
@@ -21,28 +22,8 @@ export function generateMetadata({ params }: Props): Metadata {
   };
 }
 
-export const getStaticProps: GetStaticProps = async (context) => {
-  const ssg = createServerSideHelpers({
-    router: appRouter,
-    ctx: { db, currentUserId: null, headers: null },
-    transformer: superjson,
-  });
-
-  const slug = context.params?.slug;
-  if (typeof slug !== "string") {
-    throw new Error("Expected username to be string");
-  }
-
-  await ssg.profile.getUserByUsername.prefetch({ username: slug });
-
-  return {
-    props: {
-      trpcState: ssg.dehydrate(),
-    },
-  };
-};
-
 const ProfilePage = async ({ params }: Props) => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
   const user = await api.profile.getUserByUsername.query({
     username: params.slug,
   });
@@ -50,9 +31,21 @@ const ProfilePage = async ({ params }: Props) => {
   if (!user) return <div>User not found</div>;
 
   return (
-    <main className="flex h-screen justify-center">
-      <div>@{user.username}</div>
-    </main>
+    <Layout>
+      <div className="relative h-36 border-b border-slate-400 bg-slate-600">
+        <Image
+          src={user.imageUrl}
+          width={128}
+          height={128}
+          alt="Profile pic"
+          className="absolute -bottom-16 left-4 rounded-full border-4 border-black"
+        />
+      </div>
+      <div className="h-20"></div>
+      <div className="p-4 text-2xl font-bold">@{user.username}</div>
+      <div className="w-full border-b border-slate-400"></div>
+      <ProfileFeed userId={user.id} />
+    </Layout>
   );
 };
 

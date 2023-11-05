@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import React from "react";
+import Layout from "~/app/_components/Layout";
+import PostView from "~/app/_components/PostView";
+import { api } from "~/trpc/server";
 
 type Props = {
   params: {
@@ -16,11 +19,13 @@ export function generateMetadata({ params }: Props): Metadata {
   };
 }
 
-const PostPage = ({ params }: Props) => {
+const PostPage = async ({ params }: Props) => {
+  const post = await api.post.getById.query({ id: parseInt(params.id) });
+  if (!post) return <div>Post not found</div>;
   return (
-    <main className="flex h-screen justify-center">
-      <div>{params.id}</div>
-    </main>
+    <Layout>
+      <PostView {...post} />
+    </Layout>
   );
 };
 

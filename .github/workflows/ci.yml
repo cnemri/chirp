@@ -1,0 +1,23 @@
+name: Node.js CI
+
+on: [push, pull_request]
+
+env:
+  DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: TypeScript type checking
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
