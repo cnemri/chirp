@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import React from "react";
 
 type Props = {
@@ -6,7 +7,16 @@ type Props = {
   };
 };
 
-const page = ({ params }: Props) => {
+export function generateMetadata({ params }: Props): Metadata {
+  // read route params
+  const id = params.id;
+
+  return {
+    title: `Post ${id}`,
+  };
+}
+
+const PostPage = ({ params }: Props) => {
   return (
     <main className="flex h-screen justify-center">
       <div>{params.id}</div>
@@ -14,4 +24,4 @@ const page = ({ params }: Props) => {
   );
 };
 
-export default page;
+export default PostPage;

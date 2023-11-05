@@ -23,7 +23,7 @@ import { db } from "~/server/db";
  */
 
 interface CreateContextOptions {
-  headers: Headers;
+  headers: Headers | null;
 }
 
 /**

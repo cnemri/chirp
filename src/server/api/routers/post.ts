@@ -1,4 +1,3 @@
-import type { User } from "@clerk/clerk-sdk-node";
 import { clerkClient } from "@clerk/nextjs";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
@@ -22,6 +21,7 @@ import {
   privateProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
+import { filterUserForClient } from "../helpers/filterUserForClient";
 
 export const postRouter = createTRPCRouter({
   getLatest: publicProcedure.query(({ ctx }) => {
@@ -31,13 +31,6 @@ export const postRouter = createTRPCRouter({
   }),
 
   getAll: publicProcedure.query(async ({ ctx }) => {
-    const filterUserForClient = (user: User) => {
-      return {
-        id: user.id,
-        username: user.username,
-        imageUrl: user.imageUrl,
-      };
-    };
     const posts = await ctx.db.post.findMany({
       take: 100,
       orderBy: { createdAt: "desc" },
