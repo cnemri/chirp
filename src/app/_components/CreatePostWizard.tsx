@@ -1,9 +1,13 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
+import { log } from "console";
 import Image from "next/image";
 import { useState } from "react";
+import { toast } from "react-hot-toast";
 import { api } from "~/trpc/react";
+import Spinner from "./Spinner";
+import LoadingContainer from "./LoadingContainer";
 
 const CreatePostWizard = () => {
   const { user } = useUser();
@@ -11,8 +15,20 @@ const CreatePostWizard = () => {
   const ctx = api.useUtils();
   const { mutate, isLoading: isPosting } = api.post.create.useMutation({
     onSuccess: async () => {
-      setInput("");
       await ctx.post.getAll.invalidate();
+      toast.success("Created post successfully!");
+    },
+    onError: (e) => {
+      const errorMessage = e.data?.zodError?.fieldErrors.content;
+      // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
+      if (errorMessage && errorMessage[0]) {
+        toast.error(errorMessage[0]);
+      } else {
+        toast.error("Failed to create post. Try again later.");
+      }
+    },
+    onSettled: () => {
+      setInput("");
     },
   });
 
@@ -34,14 +50,30 @@ const CreatePostWizard = () => {
         onChange={(e) => setInput(e.target.value)}
         type="text"
         disabled={isPosting}
-      />
-      <button
-        onClick={() => {
-          mutate({ content: input });
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            if (input !== "") {
+              mutate({ content: input });
+            }
+          }
         }}
-      >
-        Post
-      </button>
+      />
+      {input !== "" && !isPosting && (
+        <button
+          onClick={() => {
+            mutate({ content: input });
+          }}
+          disabled={isPosting}
+        >
+          Post
+        </button>
+      )}
+      {isPosting && (
+        <div className="flex items-center justify-center text-white">
+          <LoadingContainer />
+        </div>
+      )}
     </div>
   );
 };
