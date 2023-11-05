@@ -1,12 +1,10 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import { log } from "console";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { api } from "~/trpc/react";
-import Spinner from "./Spinner";
 import LoadingContainer from "./LoadingContainer";
 
 const CreatePostWizard = () => {
